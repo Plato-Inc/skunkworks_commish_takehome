@@ -1,12 +1,14 @@
-# skunkworks_commish Commission Engine – Take‑Home Assignment
+# Take Home Assignment - Skunkworks-Commish 
+
+## 0 · Motivation
+
+If you're hired, you'll be leading the engineering efforts of project **Skunkworks-Commish**. Our first milestone SOW is a **instant‑pay / commission‑advance engine**. This take home is intended to simulate the work you'll actually be doing on it so you get a sense of what boots on the ground will be like, and we can see your capabilities in a controlled setting.
 
 ## 1 · Context
 
-If you're hired, you'll be leading the engineering efforts of project **skunkworks_commish**. Our first milestone SOW is an **instant‑pay / commission‑advance engine**. 
+Our partner makes money by selling Medicare policies to the age eligible. His team of agents make commission when they sell policies. Insurance carriers (Humana, UHC, etc.) pay the commission over several months. The goal with Skunkworks-Commish is to front a portion so the agent gets cash today. The idea is to encourage more effective agent selling behavior by allowing them to extract their earnings close to when they earn them vs waiting two weeks for regular payroll. 
 
-Our partner employs agents who sell Medicare policies to the age eligible. Insurance carriers (Humana, UHC, etc.) pay the commission over several months. The goal with skunkworks_commish is to front a portion so the agent gets cash today. The idea is to encourage more effective agent selling behavior by allowing them to extract their earnings close to when they earn them vs waiting two weeks for regular payroll. 
-
-The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow skunkworks_commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to. While this will eventually involve some ML, for now that'd be premature optimization. I'd like you to focus on implementing the business rules first.
+The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow Skunkworks-Commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to. While this will eventually involve some ML, for now that'd be premature optimization. I'd like you to focus on implementing the business rules first.
 
 Below is a **runnable (but extremely scrappy) skeleton** so you can do that without wasting time on boilerplate.
 
@@ -91,8 +93,8 @@ pytest -q
 ## 7 · Deployment Example (Bicep)
 
 ```bash
-az group create -l eastus -n skunkworks_commish-takehome-rg
-az deployment group create   --resource-group skunkworks_commish-takehome-rg   --template-file infra/main.bicep   --parameters containerImage=ghcr.io/your-org/skunkworks_commish-api:latest
+az group create -l eastus -n Skunkworks-Commish-takehome-rg
+az deployment group create   --resource-group Skunkworks-Commish-takehome-rg   --template-file infra/main.bicep   --parameters containerImage=ghcr.io/your-org/Skunkworks-Commish-api:latest
 ```
 
 ---

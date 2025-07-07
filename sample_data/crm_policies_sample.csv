@@ -1,0 +1,4 @@
+policy_id,agent_id,submit_date,ltv_expected
+P001,A123,2025-05-28,800
+P002,A123,2025-06-20,600
+P003,A456,2025-06-20,600

@@ -2,7 +2,7 @@
 
 ## 0 · Motivation
 
-If you're hired, you'll be leading the engineering efforts of project **Skunkworks-Commish**. Our first milestone SOW is a **instant‑pay / commission‑advance engine**. This take home is intended to simulate the work you'll actually be doing on it so you get a sense of what boots on the ground will be like, and we can see your capabilities in a controlled setting.
+If you're hired, you'll be leading the engineering efforts of project **Skunkworks-Commish**. Our first milestone SOW is a **instant‑pay/commission‑advance engine**. This take home is intended to simulate the work you'll actually be doing on it so you get a sense of what boots on the ground will be like, and we can see your capabilities in a controlled setting.
 
 ## 1 · Context
 
@@ -18,13 +18,13 @@ Below is a **runnable (but extremely scrappy) skeleton** so you can do that with
 
 | Area | Your TODOs |
 |------|-----------|
-| **Business logic** | Complete `compute_quotes()` so it handles <br>• cancelled → claw‑back scenarios<br>• duplicate or late carrier payments<br>• retro policy status changes (active → cancelled)<br>• edge‑case caps (agent exceeds $2 000 cap across multiple submissions) |
+| **Business logic** | Complete `compute_quotes()` so it handles <br>• cancelled to claw‑back scenarios<br>• duplicate or late carrier payments<br>• retro policy status changes (active to cancelled)<br>• edge‑case caps (agent exceeds $2,000 cap across multiple submissions) |
 | **Data validation** | Reject malformed CSVs (missing columns, bad dates, negative amounts). Add clear error messages. |
-| **Architecture** | Refactor `app/main.py` into sensible modules / layers. Add logging, configuration via env vars, and graceful exception handling. |
+| **Architecture** | Refactor `app/main.py` into sensible modules/layers. Add logging, configuration via env vars, and graceful exception handling. |
 | **Testing** | Expand `tests/` to cover happy path **and** at least 3 edge cases (see business logic). Ensure `pytest` passed in CI. |
 | **Infrastructure‑as‑Code** | Enhance `infra/main.bicep` *or* replace with Terraform:<br>• parameterize secrets and image tag<br>• enable logging & app‑insights<br>• output the API endpoint URL.<br>Optional: GitHub Action that builds and deploys on push. |
-| **Documentation** | Update this `README.md` with:<br>• Setup & run instructions < 10 min<br>• Design / trade‑off decisions<br>• “Next two‑week roadmap” ‑ what you’d tackle next and why.  |
-| **Stretch / polish (optional)** | typed Python (mypy), data streaming instead of pandas, CI workflow, OpenAPI doc tweaks, caching layer, ADR markdowns. "How you'd improve this takehome". 
+| **Documentation** | Update this `README.md` with:<br>• Setup & run instructions < 10 min<br>• Design/trade‑off decisions<br>• “Next two‑week roadmap” ‑ what you’d tackle next and why.  |
+| **Stretch/polish (optional)** | ML to predict safety withdraw amt, typed Python (mypy), data streaming instead of pandas, CI workflow, OpenAPI doc tweaks, caching layer, ADR markdowns. "How you'd improve this takehome". 
 
 We score *thoughtful* extras higher than volume. |
 
@@ -53,7 +53,7 @@ Sample CSVs live in `sample_data/`.  Schema:
 1. **Earned to date** per policy = Σ payments received.  
 2. **Remaining expected** = `ltv_expected − earned_to_date`.  
 3. A policy is **advance‑eligible** when `status = active` **AND** `submit_date ≤ today − 7 days`.  
-4. **Safe‑to‑advance** per agent = `min( 0.80 × Σ remaining_expected (eligible), 2 000 USD cap )`.
+4. **Safe‑to‑advance** per agent = `min( 0.80 × Σ remaining_expected (eligible), 2,000 USD cap )`.
 
 We freeze **today** to `2025‑07‑06` in the skeleton for unit‑test reproducibility. You may switch to `datetime.utcnow()`; just adapt your tests.
 
@@ -108,7 +108,7 @@ az deployment group create   --resource-group Skunkworks-Commish-takehome-rg   -
 | Tests (coverage & clarity)   | 10 |
 | IaC robustness               | 10 |
 | Documentation & developer experience | 10 |
-| Trade‑off / roadmap memo     | 10 |
+| Trade‑off/roadmap memo     | 10 |
 | Stretch polish               | 10 |
 
 We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
@@ -141,7 +141,7 @@ If anything here is unclear, email **brandon@platostudio.com**.
 | 7 | **How should I handle duplicate payment rows?** | Collapse identical `(policy_id, paid_date, amount)` rows into one logical payment unless you document a better approach in README. |
 | 8 | **May I add third‑party libs (Pydantic, Poetry, etc.)?** | Yes, provided `pip install -r requirements.txt` or `docker compose up` works in < 5 min on a clean machine. Keep the dependency list lean. |
 | 9 | **Timeline after I submit?** | Within **12 h** you’ll get PR comments + a 30‑min Zoom debrief invite. Offer decision within the following **24 h**. |
-| 10 | **How do I test the \$2,000 cap scenario?** | Agent **A001** in the sample data exceeds the cap. Your unit test should assert their `safe_to_advance` is \$2 000. |
+| 10 | **How do I test the \$2,000 cap scenario?** | Agent **A001** in the sample data exceeds the cap. Your unit test should assert their `safe_to_advance` is \$2,000. |
 | 11 | **What if a cancelled policy already paid multiple installments?** | Treat claw‑backs as **negative payments**. Earned = Σ payments (can be negative). Remaining = max(`ltv_expected − earned`, 0). |
 | 12 | **What branch/PR naming do you prefer?** | Create a branch `<initial><lastname>` (e.g., `bdey`). Open a PR to `main`; don’t sweat CI failures—we run our own checks. |
 

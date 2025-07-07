@@ -1,16 +1,14 @@
 # skunkworks_commish Commission Engine – Take‑Home Assignment
 
-**Estimated effort:** ≈5 focused hours (this assignment is paid).  
----
-
 ## 1 · Context
 
 If you're hired, you'll be leading the engineering efforts of project **skunkworks_commish**. Our first milestone in the skunkworks_commish Statement‑of‑Work is an **instant‑pay / commission‑advance engine**. 
 
-Our partner employs agents who sell Medicare policies to the age eligible. Insurance carriers (Humana, UHC, etc.) pay the commission over several months. The goal with skunkworks_commish is to front a portion so the agent gets cash today. The idea is to encourage more effective agent selling behavior by allowing them to extract their earnings close to when they earn them vs waiting two weeks for regular payroll. The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow skunkworks_commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to.  
+Our partner employs agents who sell Medicare policies to the age eligible. Insurance carriers (Humana, UHC, etc.) pay the commission over several months. The goal with skunkworks_commish is to front a portion so the agent gets cash today. The idea is to encourage more effective agent selling behavior by allowing them to extract their earnings close to when they earn them vs waiting two weeks for regular payroll. 
 
+The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow skunkworks_commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to.  
 
-We’ve provided a **runnable skeleton** so you can concentrate on the *interesting* problems instead of boilerplate.
+Below is a **runnable skeleton** so you can concentrate on the *interesting* problems instead of boilerplate.
 
 ---
 
@@ -40,7 +38,7 @@ Sample CSVs live in `sample_data/`.  Schema:
 | `agent_id`             | `agent_id` |
 | `paid_date`            | `submit_date` |
 | `amount`               | `ltv_expected` |
-| `status` (`active|cancelled`) | |
+| `status` (`active/cancelled`) | |
 
 *You may add columns if your solution benefits.*
 
@@ -111,6 +109,12 @@ az deployment group create   --resource-group skunkworks_commish-takehome-rg   -
 
 We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
 
----
+## 9 · Submission 
+1. Follow `CONTRIBUTING.md` where the feature branch is your first initial + last name. E.g., **bdey**.
+2. Email **brandon@platostudio.com** you're done. 
+3. Brandon will review async, leave commments, and schedule a call to debrief with you within 12h of submission. 
+4. Founders will make decide to make offer or not with 24h after that. 
 
-### Good luck! We’re excited to see your approach!
+**Estimated effort:** ≈5 focused hours. This assignment is paid $100/hr capped at $500.  
+
+Good luck! We’re excited to see your approach! 

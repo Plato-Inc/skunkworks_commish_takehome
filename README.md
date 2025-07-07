@@ -2,13 +2,13 @@
 
 ## 1 · Context
 
-If you're hired, you'll be leading the engineering efforts of project **skunkworks_commish**. Our first milestone in the skunkworks_commish Statement‑of‑Work is an **instant‑pay / commission‑advance engine**. 
+If you're hired, you'll be leading the engineering efforts of project **skunkworks_commish**. Our first milestone SOW is an **instant‑pay / commission‑advance engine**. 
 
 Our partner employs agents who sell Medicare policies to the age eligible. Insurance carriers (Humana, UHC, etc.) pay the commission over several months. The goal with skunkworks_commish is to front a portion so the agent gets cash today. The idea is to encourage more effective agent selling behavior by allowing them to extract their earnings close to when they earn them vs waiting two weeks for regular payroll. 
 
-The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow skunkworks_commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to.  
+The challenge is their commission **today** is based on what they sell across the whole pay period. This is called tiered compensation. E.g., if the agent sells 10 policies, they get 1% commission; If they sell 11-20 policies, they get 2%, etc. It's therefore essential to reliably predict how many policies an agent will sell over the whole pay period for every day of the pay period. Having this will allow skunkworks_commish to distribute a portion of the commisions without having to ask for it back in the event the agent doesn't in fact sell what they were expected to. While this will eventually involve some ML, for now that'd be premature optimization. I'd like you to focus on implementing the business rules first.
 
-Below is a **runnable skeleton** so you can concentrate on the *interesting* problems instead of boilerplate.
+Below is a **runnable (but extremely scrappy) skeleton** so you can do that without wasting time on boilerplate.
 
 ---
 
@@ -112,11 +112,36 @@ az deployment group create   --resource-group skunkworks_commish-takehome-rg   -
 We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
 
 ## 9 · Submission 
+
 1. Follow `CONTRIBUTING.md` where the feature branch is your first initial + last name. E.g., **bdey**.
 2. Email **brandon@platostudio.com** you're done. 
 3. Brandon will review async, leave commments, and schedule a call for you to explain your work/findings within 12h of submission. 
 4. Founders will make decide to make offer or not with 24h after that. 
 
+
 **Estimated effort:** ≈5 focused hours. This assignment is paid $100/hr capped at $500.  
+
+
+## 9 · FAQ
+
+A quick reference for the most common questions we see about the take‑home.  
+
+If anything here is unclear, email **brandon@platostudio.com**.
+
+| # | Question | Answer |
+|---|--------------------|-------------|
+| 1 | **How do I get paid for the take‑home?** | We pay **$100 /hr, up to 5 hours**. Email a simple invoice (PDF or plain email) listing hours worked; we ACH within 3 business days. No NDA or W‑9 needed for this task. |
+| 2 | **What counts as DONE?** | Ship a repo that passes the checklist in §5 (working API, tests, IaC that compiles, updated README). Extras are optional brownie points. |
+| 3 | **May I change the skeleton (framework, file layout)?** | Absolutely. Keep the `/advance-quote` endpoint and CSV schemas so our grader works, but everything else is fair game. |
+| 4 | **Do I need a live Azure subscription for IaC?** | No. Your Bicep/Terraform just needs to validate (`az bicep build` or `terraform validate`). Use dummy parameters; we’ll deploy if needed. |
+| 5 | **Do I have to build the tier‑prediction ML model?** | Not for this assignment. Focus only on the safe‑advance logic (`compute_quotes`). Predictive modeling is Phase 2 after hire. But this could be extra brownie points if you have time. |
+| 6 | **What does `status` mean in remittances vs CRM?** | In **remittance rows** it’s the status *at the payment time* (may flip later). In **CRM** it’s the latest status. Sort by `paid_date` to find last‑known status. |
+| 7 | **How should I handle duplicate payment rows?** | Collapse identical `(policy_id, paid_date, amount)` rows into one logical payment unless you document a better approach in README. |
+| 8 | **May I add third‑party libs (Pydantic, Poetry, etc.)?** | Yes, provided `pip install -r requirements.txt` or `docker compose up` works in < 5 min on a clean machine. Keep the dependency list lean. |
+| 9 | **Timeline after I submit?** | Within **12 h** you’ll get PR comments + a 30‑min Zoom debrief invite. Offer decision within the following **24 h**. |
+| 10 | **How do I test the \$2,000 cap scenario?** | Agent **A001** in the sample data exceeds the cap. Your unit test should assert their `safe_to_advance` is \$2 000. |
+| 11 | **What if a cancelled policy already paid multiple installments?** | Treat claw‑backs as **negative payments**. Earned = Σ payments (can be negative). Remaining = max(`ltv_expected − earned`, 0). |
+| 12 | **What branch/PR naming do you prefer?** | Create a branch `<initial><lastname>` (e.g., `bdey`). Open a PR to `main`; don’t sweat CI failures—we run our own checks. |
+
 
 Good luck! We’re excited to see your approach! 

@@ -1,5 +1,0 @@
-policy_id,agent_id,paid_date,amount,status
-P001,A123,2025-06-05,200,active
-P001,A123,2025-07-05,200,active
-P002,A123,2025-07-01,300,cancelled
-P003,A456,2025-07-01,150,active

@@ -22,7 +22,9 @@ Below is a **runnable skeleton** so you can concentrate on the *interesting* pro
 | **Testing** | Expand `tests/` to cover happy path **and** at least 3 edge cases (see business logic). Ensure `pytest` passed in CI. |
 | **Infrastructure‑as‑Code** | Enhance `infra/main.bicep` *or* replace with Terraform:<br>• parameterize secrets and image tag<br>• enable logging & app‑insights<br>• output the API endpoint URL.<br>Optional: GitHub Action that builds and deploys on push. |
 | **Documentation** | Update this `README.md` with:<br>• Setup & run instructions < 10 min<br>• Design / trade‑off decisions<br>• “Next two‑week roadmap” ‑ what you’d tackle next and why.  |
-| **Stretch / polish (optional)** | Examples: typed Python (mypy), data streaming instead of pandas, CI workflow, OpenAPI doc tweaks, caching layer, ADR markdowns. • "How you'd improve this takehome". We score *thoughtful* extras higher than volume. |
+| **Stretch / polish (optional)** | typed Python (mypy), data streaming instead of pandas, CI workflow, OpenAPI doc tweaks, caching layer, ADR markdowns. "How you'd improve this takehome". 
+
+We score *thoughtful* extras higher than volume. |
 
 You’ll find **`TODO:` markers** sprinkled through the code as starting points. Feel free to restructure entirely.
 
@@ -112,7 +114,7 @@ We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
 ## 9 · Submission 
 1. Follow `CONTRIBUTING.md` where the feature branch is your first initial + last name. E.g., **bdey**.
 2. Email **brandon@platostudio.com** you're done. 
-3. Brandon will review async, leave commments, and schedule a call to debrief with you within 12h of submission. 
+3. Brandon will review async, leave commments, and schedule a call for you to explain your work/findings within 12h of submission. 
 4. Founders will make decide to make offer or not with 24h after that. 
 
 **Estimated effort:** ≈5 focused hours. This assignment is paid $100/hr capped at $500.  

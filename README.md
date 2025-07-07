@@ -2,7 +2,7 @@
 
 ## 0 · Motivation
 
-If you're hired, you'll be leading the engineering efforts of project **Skunkworks-Commish**. Our first milestone SOW is a **instant‑pay/commission‑advance engine**. This take home is intended to simulate the work you'll actually be doing on it so you get a sense of what boots on the ground will be like, and we can see your capabilities in a controlled setting.
+If you're hired, you'll be leading the engineering efforts of project **Skunkworks-Commish**. Our first milestone is a **instant‑pay/commission‑advance engine**. This take home is intended to simulate the work you'll actually be doing on it so you get a sense of what boots on the ground will be like, and we can see your capabilities in a controlled setting.
 
 ## 1 · Context
 
@@ -124,7 +124,7 @@ We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
 **Estimated effort:** ≈5 focused hours. This assignment is paid $100/hr capped at $500.  
 
 
-## 9 · FAQ
+## 10 · FAQ
 
 A quick reference for the most common questions we see about the take‑home.  
 

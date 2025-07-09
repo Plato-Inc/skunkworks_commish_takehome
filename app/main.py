@@ -1,14 +1,12 @@
-import logging
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
+from app.logging_config import configure_logging
 from app.quotes import compute_quotes
 from app.utils import _read_csv_file, _validate_csv_files
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = configure_logging()
 
 app = FastAPI(title="SMS Commission Engine")
 

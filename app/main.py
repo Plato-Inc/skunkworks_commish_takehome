@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime, timedelta, timezone
-from io import StringIO
 
 import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
+
+from app.utils import _read_csv_file, _validate_csv_files
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,26 +19,6 @@ def safe_float(x):
         return float(x)
     except Exception:
         return 0.0
-
-def _validate_csv_files(*files: UploadFile) -> bool:
-    """Validate that all uploaded files are CSV files."""
-    for file in files:
-        if not file.filename or not file.filename.lower().endswith('.csv'):
-            return False
-    return True
-
-def _read_csv_file(file: UploadFile, file_name: str) -> pd.DataFrame:
-    """Read and validate CSV file content."""
-    try:
-        content = file.file.read()
-        file.file.seek(0)  # Reset file pointer for potential reuse
-        return pd.read_csv(StringIO(content.decode('utf-8')))
-    except UnicodeDecodeError:
-        raise ValueError(f"{file_name} contains invalid UTF-8 encoding")
-    except pd.errors.EmptyDataError:
-        raise ValueError(f"{file_name} is empty")
-    except pd.errors.ParserError:
-        raise ValueError(f"{file_name} has invalid CSV format")
 
 def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
     # Merge on policy_id & agent_id for safety

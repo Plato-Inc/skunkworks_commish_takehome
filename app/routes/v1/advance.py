@@ -8,7 +8,7 @@ from app.utils import _read_csv_file, _validate_csv_files
 
 logger = configure_logging()
 
-router = APIRouter()
+router = APIRouter(prefix="/v1")
 
 @router.post("/advance-quote")
 async def advance_quote(

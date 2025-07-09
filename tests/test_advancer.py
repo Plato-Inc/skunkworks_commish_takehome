@@ -35,7 +35,7 @@ def test_advance_quote_success():
         "crm_policies": ("crm.csv", crm_csv, "text/csv")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 200
     data = response.json()
@@ -52,7 +52,7 @@ def test_advance_quote_invalid_file_type():
         "crm_policies": ("crm.txt", "some content", "text/plain")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 400
     assert "CSV files" in response.json()["detail"]
@@ -64,7 +64,7 @@ def test_advance_quote_missing_filename():
         "carrier_remittance": ("", "some content", "text/csv"),
         "crm_policies": ("", "some content", "text/csv")
     }
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     assert response.status_code == 422
 
 def test_advance_quote_empty_csv():
@@ -74,7 +74,7 @@ def test_advance_quote_empty_csv():
         "crm_policies": ("crm.csv", "", "text/csv")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 400
     assert "empty" in response.json()["detail"]
@@ -90,7 +90,7 @@ def test_advance_quote_encoding_error():
         "crm_policies": ("crm.csv", "policy_id,agent_id,submit_date,ltv_expected\nP001,A1,2025-06-15,800", "text/csv")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 400
     assert "UTF-8 encoding" in response.json()["detail"]
@@ -105,7 +105,7 @@ def test_advance_quote_mixed_file_types():
         "crm_policies": ("crm.txt", "some text content", "text/plain")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 400
     assert "CSV files" in response.json()["detail"]
@@ -121,7 +121,7 @@ def test_advance_quote_case_insensitive_extension():
         "crm_policies": ("crm.Csv", crm_csv, "text/csv")
     }
     
-    response = client.post("/advance-quote", files=files)
+    response = client.post("/v1/advance-quote", files=files)
     
     assert response.status_code == 200
     data = response.json()

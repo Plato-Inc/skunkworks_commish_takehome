@@ -129,3 +129,23 @@ def test_compute_quotes_basic():
     })
     result = compute_quotes(carrier, crm)
     assert result[0]["safe_to_advance"] == 320  # 800‑400 earned =400; 0.8×400=320
+
+def test_compute_quotes_sample_data():
+    """Test compute_quotes with the sample_data CSV files and compare to expected response."""
+    import json
+    import os
+
+    import pandas as pd
+    sample_dir = os.path.join(os.path.dirname(__file__), "..", "sample_data")
+    carrier_path = os.path.abspath(os.path.join(sample_dir, "carrier_remittance.csv"))
+    crm_path = os.path.abspath(os.path.join(sample_dir, "crm_policies.csv"))
+    response_path = os.path.abspath(os.path.join(sample_dir, "sample_response.json"))
+    carrier = pd.read_csv(carrier_path)
+    crm = pd.read_csv(crm_path)
+    with open(response_path) as f:
+        expected = json.load(f)
+    result = compute_quotes(carrier, crm)
+    # Sort both lists by agent_id for comparison
+    result_sorted = sorted(result, key=lambda x: x["agent_id"])
+    expected_sorted = sorted(expected, key=lambda x: x["agent_id"])
+    assert result_sorted == expected_sorted

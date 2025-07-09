@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "commission-advance-api",
+		"name": "Commission Advance API",
+		"description": "Complete test suite for the Skunkworks-Commish commission advance engine API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains status healthy\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"healthy\");",
+							"});",
+							"",
+							"pm.test(\"Response contains timestamp\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.timestamp).to.exist;",
+							"});",
+							"",
+							"pm.test(\"Response contains version\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.version).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Advance Quote - Happy Path",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains quotes array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.quotes).to.be.an('array');",
+							"});",
+							"",
+							"pm.test(\"Response contains metadata\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.generated_at).to.exist;",
+							"    pm.expect(jsonData.total_agents).to.be.a('number');",
+							"    pm.expect(jsonData.total_policies_analyzed).to.be.a('number');",
+							"});",
+							"",
+							"pm.test(\"Agent A001 exceeds $2000 cap\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var agentA001 = jsonData.quotes.find(q => q.agent_id === 'A001');",
+							"    pm.expect(agentA001).to.exist;",
+							"    pm.expect(agentA001.safe_to_advance).to.eql(2000.0);",
+							"});",
+							"",
+							"pm.test(\"All quotes have required fields\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    jsonData.quotes.forEach(function(quote) {",
+							"        pm.expect(quote.agent_id).to.exist;",
+							"        pm.expect(quote.earned_to_date).to.be.a('number');",
+							"        pm.expect(quote.total_eligible_remaining).to.be.a('number');",
+							"        pm.expect(quote.safe_to_advance).to.be.a('number');",
+							"        pm.expect(quote.eligible_policies_count).to.be.a('number');",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"type": "formdata",
+					"formdata": [
+						{
+							"key": "carrier_remittance",
+							"type": "file",
+							"src": "sample_data/carrier_remittance.csv"
+						},
+						{
+							"key": "crm_policies",
+							"type": "file",
+							"src": "sample_data/crm_policies.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/advance-quote",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"advance-quote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Advance Quote - Missing Carrier File",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"pm.test(\"Error message indicates missing file\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.detail).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"type": "formdata",
+					"formdata": [
+						{
+							"key": "crm_policies",
+							"type": "file",
+							"src": "sample_data/crm_policies.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/advance-quote",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"advance-quote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Advance Quote - Missing CRM File",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 422\", function () {",
+							"    pm.response.to.have.status(422);",
+							"});",
+							"",
+							"pm.test(\"Error message indicates missing file\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.detail).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"type": "formdata",
+					"formdata": [
+						{
+							"key": "carrier_remittance",
+							"type": "file",
+							"src": "sample_data/carrier_remittance.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/advance-quote",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"advance-quote"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API Documentation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response contains OpenAPI documentation\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"FastAPI\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/docs",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"docs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "OpenAPI JSON Schema",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is valid JSON\", function () {",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Contains OpenAPI schema\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.openapi).to.exist;",
+							"    pm.expect(jsonData.info).to.exist;",
+							"    pm.expect(jsonData.paths).to.exist;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/openapi.json",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"openapi.json"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set base URL if not already set",
+					"if (!pm.environment.get(\"base_url\")) {",
+					"    pm.environment.set(\"base_url\", \"http://localhost:8000\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Log response time for performance monitoring",
+					"console.log(\"Response time: \" + pm.response.responseTime + \"ms\");"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+} 

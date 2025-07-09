@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - LOG_LEVEL=INFO
+      - FROZEN_DATE=2025-07-06
+      - ADVANCE_PERCENTAGE=0.80
+      - MAX_ADVANCE_AMOUNT=2000.0
+      - ELIGIBILITY_DAYS=7
+    volumes:
+      # Mount sample data for testing
+      - ./sample_data:/app/sample_data:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped

@@ -123,8 +123,98 @@ We value **clarity, reasoning, and sensible trade‑offs** over lines of code.
 
 **Estimated effort:** ≈5 focused hours. This assignment is paid $100/hr capped at $500.  
 
+---
 
-## 10 · FAQ
+## 10 · Implementation Notes
+
+### Setup & Run Instructions
+
+**Quick Start (< 5 minutes):**
+
+```bash
+# Clone and setup
+git clone <repo-url>
+cd skunkworks_commish_takehome
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+# Run the application
+make dev
+# OR: uvicorn app.main:app --reload
+
+# Test the application
+make test
+# OR: pytest -q
+
+# Test the API endpoint
+curl -X POST "http://localhost:8000/advance-quote" \
+  -F "carrier_remittance=@sample_data/carrier_remittance.csv" \
+  -F "crm_policies=@sample_data/crm_policies.csv"
+```
+
+**Docker Alternative:**
+```bash
+docker compose up --build
+```
+
+**API Documentation:** Visit `http://localhost:8000/docs` for interactive Swagger UI.
+
+**E2E Testing with Postman:** Import `postman_collection.json` for comprehensive testing. See `POSTMAN_TESTING.md` for detailed instructions.
+
+### Design & Trade-off Decisions
+
+**Architecture Decisions:**
+- **Modular Design**: Separated concerns into distinct modules (`business_logic`, `validators`, `models`, `config`) for maintainability and testability
+- **FastAPI Framework**: Chosen for automatic API documentation, type validation, and async support for future scalability
+- **Pandas for Data Processing**: Efficient for CSV manipulation and business calculations, though could be replaced with streaming for larger datasets
+- **Configuration via Environment Variables**: Enables easy deployment across environments without code changes
+
+**Business Logic Trade-offs:**
+- **Deduplication Strategy**: Implemented FAQ #7 by collapsing identical `(policy_id, paid_date, amount)` tuples, taking the latest status alphabetically
+- **Frozen Date for Testing**: Used `2025-07-06` as a fixed date for reproducible testing, with easy configuration via environment variables
+- **Negative Payment Handling**: Treats claw-backs as negative payments that reduce total earned amounts, with remaining expected capped at zero
+- **Memory vs. Performance**: Current implementation loads full datasets into memory for simplicity; streaming approach would be needed for large-scale production
+
+**Error Handling Strategy:**
+- **Custom Exception Hierarchy**: Clear error types (`ValidationError`, `BusinessLogicError`, `FileProcessingError`) with specific HTTP status codes
+- **Comprehensive Validation**: File type checking, size limits, CSV structure validation, and business rule enforcement
+- **Graceful Degradation**: Detailed error messages help users understand and fix issues quickly
+
+**Infrastructure Choices:**
+- **Azure Bicep**: Parameterized infrastructure with logging, monitoring, and security best practices
+- **Container-based Deployment**: Docker containers for consistent deployment across environments
+- **Key Vault Integration**: Secure secret management with managed identity access
+- **Application Insights**: Built-in observability and performance monitoring
+
+### Next Two-Week Roadmap
+
+**Week 1 Priorities:**
+1. **Performance Optimization** (3 days)
+   - Implement streaming CSV processing for large datasets (>10MB)
+   - Add caching layer (Redis) for repeated policy lookups
+   - Database integration for persistent storage instead of CSV processing
+   - Add request rate limiting and input validation improvements
+
+2. **Developer Experience** (2 days)
+   - GitHub Actions CI/CD pipeline with automated testing and deployment
+   - Local development Docker Compose with database and monitoring stack
+   - OpenAPI specification enhancements with detailed examples
+   - Performance testing suite and load testing automation
+
+**Week 2 Priorities:**
+1. **ML Foundation** (3 days)
+   - Historical data analysis pipeline for commission prediction models
+   - Feature engineering for agent behavior patterns and seasonal trends
+
+2. **Production Readiness** (2 days)
+   - Add comprehensive health checks with dependency validation
+   - Add metrics collection (Prometheus/Grafana) for business KPIs
+   - Database migration scripts and backup strategy
+
+
+**Rationale:** The first week focuses on production stability and scalability, ensuring the system can handle real-world usage patterns. Week 2 builds the foundation for the core ML capabilities that will differentiate the product.
+
+## 11 · FAQ
 
 A quick reference for the most common questions we see about the take‑home.  
 

@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 
 from app.logging_config import configure_logging
 from app.quotes import compute_quotes
@@ -20,7 +20,7 @@ async def advance_quote(
     if not _validate_csv_files(carrier_remittance, crm_policies):
         logger.warning(f"Invalid file types submitted: {carrier_remittance.filename}, {crm_policies.filename}")
         raise HTTPException(
-            status_code=400, 
+            status_code=status.HTTP_400_BAD_REQUEST, 
             detail="Both uploads must be valid CSV files with .csv extension"
         )
     try:
@@ -36,7 +36,7 @@ async def advance_quote(
         }
     except ValueError as e:
         logger.error(f"CSV validation error: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Invalid CSV format: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Invalid CSV format: {str(e)}")
     except Exception:
         logger.error("Unexpected error during quote generation", exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error") 
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error") 

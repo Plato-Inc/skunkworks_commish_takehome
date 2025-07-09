@@ -10,7 +10,7 @@ ELIGIBILITY_DAYS = 7
 def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
     # Merge on policy_id & agent_id for safety
     merged = pd.merge(carrier_df, crm_df, on=["policy_id", "agent_id"], suffixes=("_carrier", "_crm"))
-    # Earned to date
+    # Earned commission to date
     earned = merged.groupby(["policy_id", "agent_id"])["amount"].sum().reset_index()
     earned = earned.rename(columns={"amount": "earned_to_date"})
     merged = pd.merge(merged.drop(columns="amount"), earned, on=["policy_id", "agent_id"])

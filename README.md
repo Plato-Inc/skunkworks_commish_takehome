@@ -200,3 +200,61 @@ If anything here is unclear, email **brandon@platostudio.com**.
 
 
 Good luck! We’re excited to see your approach! 
+
+## 13 · What's Next
+
+This section outlines the remaining work to be done on the Skunkworks-Commish project, organized by priority and category.
+
+### 🚀 **High Priority - Production Readiness**
+
+#### **Deployment & Infrastructure**
+- **Validate Azure deployment**: Test the Bicep template with real Azure resources and configure environment variables in app settings
+- **Deployment strategy evaluation**: Explore whether for a small app it's worth deploying to Azure or if deploying to Heroku/Render would suffice (cost-benefit analysis)
+- **Add deploy GitHub workflow**: Create a workflow that deploys from the main branch and creates review apps from feature branches
+- **Environment configuration**: Set up proper environment variable management for different deployment stages (dev/staging/prod)
+
+#### **CI/CD Enhancements**
+- **Auto-fix linting**: Update the lint GitHub action to automatically add a commit with lint fixes if the lint check fails
+- **Test coverage reporting**: Add coverage thresholds and reporting to the test workflow
+- **Security scanning**: Integrate dependency vulnerability scanning (e.g., Snyk, GitHub Dependabot)
+- **Performance testing**: Add basic load testing to ensure the API can handle expected traffic
+
+### 📈 **Medium Priority - Feature Expansion**
+
+#### **API Development**
+- **API documentation**: Add comprehensive OpenAPI/Swagger docs for v1 as the route tree grows
+- **Rate limiting**: Implement rate limiting to prevent abuse
+- **Health checks**: Add `/health` and `/ready` endpoints for monitoring
+
+#### **Data & Validation**
+- **Enhanced CSV validation**: Add more robust validation for CSV uploads (data types, business rules, etc.)
+- **Data streaming**: Replace pandas with streaming solutions for large file processing
+
+#### **Business Logic**
+- **ML prediction model**: Implement the tiered compensation prediction model (Phase 2)
+- **Advanced eligibility rules**: Add more sophisticated eligibility criteria beyond the 7-day rule
+- **Multi-tenant support**: Support multiple insurance carriers with different rules
+
+### 🎨 **Lower Priority - Polish & Optimization**
+
+#### **Performance & Scalability**
+- **Horizontal scaling**: Design for multiple instances behind a load balancer
+- **Background jobs**: Move heavy processing to background workers
+
+#### **Security & Compliance**
+- **Authentication & authorization**: Add proper auth (OAuth2, JWT, etc.)
+- **Data encryption**: Encrypt sensitive data at rest and in transit
+
+### 🎯 **Next Two-Week Roadmap**
+
+**Week 1: Production Readiness**
+1. Deploy to Azure and validate the Bicep template
+2. Set up proper environment configuration
+3. Add auto-fix linting to CI/CD
+4. Create deployment workflow for main branch
+
+**Week 2: Feature Enhancement**
+1. Add comprehensive API documentation
+2. Implement rate limiting and health checks
+3. Add enhanced CSV validation
+4. Begin ML model development for tiered compensation

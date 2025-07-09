@@ -124,15 +124,6 @@ resource apiApp 'Microsoft.Web/sites@2022-09-01' = {
           name: 'WEBSITES_PORT'
           value: '8000'
         }
-        // Add custom environment variables
-        if (!empty(environmentVariables)) {
-          for (envVar in items(environmentVariables)) {
-            {
-              name: envVar.key
-              value: string(envVar.value)
-            }
-          }
-        }
       ]
     }
   }
@@ -141,4 +132,4 @@ resource apiApp 'Microsoft.Web/sites@2022-09-01' = {
 // Output the API endpoint URL
 output apiEndpoint string = 'https://${apiApp.properties.defaultHostName}'
 output appInsightsInstrumentationKey string = appInsights.properties.InstrumentationKey
-output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.customerId
+output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.properties.customerId

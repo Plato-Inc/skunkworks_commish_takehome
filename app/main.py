@@ -1,7 +1,13 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-import pandas as pd
+import logging
+from datetime import datetime, timedelta, timezone
 from io import StringIO
-from datetime import datetime, timedelta
+
+import pandas as pd
+from fastapi import FastAPI, File, HTTPException, UploadFile
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="SMS Commission Engine")
 
@@ -13,11 +19,32 @@ def safe_float(x):
     except Exception:
         return 0.0
 
+def _validate_csv_files(*files: UploadFile) -> bool:
+    """Validate that all uploaded files are CSV files."""
+    for file in files:
+        if not file.filename or not file.filename.lower().endswith('.csv'):
+            return False
+    return True
+
+def _read_csv_file(file: UploadFile, file_name: str) -> pd.DataFrame:
+    """Read and validate CSV file content."""
+    try:
+        content = file.file.read()
+        file.file.seek(0)  # Reset file pointer for potential reuse
+        return pd.read_csv(StringIO(content.decode('utf-8')))
+    except UnicodeDecodeError:
+        raise ValueError(f"{file_name} contains invalid UTF-8 encoding")
+    except pd.errors.EmptyDataError:
+        raise ValueError(f"{file_name} is empty")
+    except pd.errors.ParserError:
+        raise ValueError(f"{file_name} has invalid CSV format")
+
 def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
     # Merge on policy_id & agent_id for safety
     merged = pd.merge(carrier_df, crm_df, on=["policy_id", "agent_id"], suffixes=("_carrier", "_crm"))
     # Earned to date
-    earned = merged.groupby(["policy_id", "agent_id"])["amount"].sum().reset_index(name="earned_to_date")
+    earned = merged.groupby(["policy_id", "agent_id"])["amount"].sum().reset_index()
+    earned = earned.rename(columns={"amount": "earned_to_date"})
     merged = pd.merge(merged.drop(columns="amount"), earned, on=["policy_id", "agent_id"])
     merged["remaining_expected"] = merged["ltv_expected"] - merged["earned_to_date"]
     # Advance‑eligibility
@@ -34,14 +61,37 @@ def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
 
 @app.post("/advance-quote")
 async def advance_quote(
-    carrier_remittance: UploadFile = File(...),
-    crm_policies: UploadFile = File(...)
+    carrier_remittance: UploadFile = File(..., description="Carrier remittance CSV file"),
+    crm_policies: UploadFile = File(..., description="CRM policies CSV file")
 ):
-    for f in (carrier_remittance, crm_policies):
-        if not f.filename.endswith(".csv"):
-            raise HTTPException(status_code=400, detail="Both uploads must be CSV files.")
-    # Read into pandas
-    carrier_df = pd.read_csv(StringIO((await carrier_remittance.read()).decode()))
-    crm_df = pd.read_csv(StringIO((await crm_policies.read()).decode()))
-    quotes = compute_quotes(carrier_df, crm_df)
-    return {"generated_at": str(datetime.utcnow()), "quotes": quotes}
+    logger.info(f"Processing advance quote request with files: {carrier_remittance.filename}, {crm_policies.filename}")
+    
+    # Validate file types
+    if not _validate_csv_files(carrier_remittance, crm_policies):
+        logger.warning(f"Invalid file types submitted: {carrier_remittance.filename}, {crm_policies.filename}")
+        raise HTTPException(
+            status_code=400, 
+            detail="Both uploads must be valid CSV files with .csv extension"
+        )
+    
+    try:
+        # Read CSV files with error handling
+        carrier_df = _read_csv_file(carrier_remittance, "carrier_remittance")
+        crm_df = _read_csv_file(crm_policies, "crm_policies")
+        
+        logger.info(f"Successfully read CSV files. Carrier records: {len(carrier_df)}, CRM records: {len(crm_df)}")
+        
+        quotes = compute_quotes(carrier_df, crm_df)
+        
+        logger.info(f"Successfully generated quotes for {len(quotes)} agents")
+        
+        return {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "quotes": quotes
+        }
+    except ValueError as e:
+        logger.error(f"CSV validation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Invalid CSV format: {str(e)}")
+    except Exception:
+        logger.error("Unexpected error during quote generation", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")

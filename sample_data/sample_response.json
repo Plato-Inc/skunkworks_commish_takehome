@@ -1,0 +1,23 @@
+[
+    {"agent_id": "A001", "earned_to_date": 4000.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A002", "earned_to_date": 3000.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A003", "earned_to_date": 1900.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A004", "earned_to_date": 1850.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A005", "earned_to_date": 1925.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A006", "earned_to_date": 1750.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A007", "earned_to_date": 2175.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A008", "earned_to_date": 1700.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A009", "earned_to_date": 1800.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A010", "earned_to_date": 2200.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A011", "earned_to_date": 1875.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A012", "earned_to_date": 1800.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A013", "earned_to_date": 1900.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A014", "earned_to_date": 1975.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A015", "earned_to_date": 1875.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A016", "earned_to_date": 1800.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A017", "earned_to_date": 1825.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A018", "earned_to_date": 1825.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A019", "earned_to_date": 2025.0, "safe_to_advance": 2000.0}, 
+    {"agent_id": "A020", "earned_to_date": 1875.0, "safe_to_advance": 2000.0},
+    {"agent_id": "A021", "earned_to_date": 225.0, "safe_to_advance": 540.0}
+]

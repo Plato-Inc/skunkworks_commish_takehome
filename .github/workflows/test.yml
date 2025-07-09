@@ -1,0 +1,38 @@
+name: Test Suite
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+        
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        
+    - name: Clear cache and install dependencies
+      run: |
+        poetry install --all-extras
+      
+    - name: Verify dependencies
+      run: |
+        poetry run python -c "import pandas; print('pandas version:', pandas.__version__)"
+        poetry run python -c "import fastapi; print('fastapi version:', fastapi.__version__)"
+        poetry run python -c "import pytest; print('pytest version:', pytest.__version__)"
+      
+    - name: Run tests
+      run: poetry run pytest -v

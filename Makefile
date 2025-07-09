@@ -1,7 +1,17 @@
-.PHONY: dev test
+.PHONY: dev test lint lint-fix install
+
+install:
+	poetry install
 
 dev:
-	uvicorn app.main:app --reload
+	poetry run uvicorn app.main:app --reload
 
 test:
-	pytest -q
+	poetry run pytest -q
+
+lint:
+	poetry run ruff check .
+
+lint-fix:
+	poetry run ruff check . --fix
+	poetry run ruff format .

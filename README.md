@@ -195,26 +195,24 @@ docker compose up --build
    - Database integration for persistent storage instead of CSV processing
    - Add request rate limiting and input validation improvements
 
-2. **Production Readiness** (2 days)
-   - Add comprehensive health checks with dependency validation
-   - Implement circuit breaker pattern for external service calls
-   - Add metrics collection (Prometheus/Grafana) for business KPIs
-   - Database migration scripts and backup strategy
-
-**Week 2 Priorities:**
-1. **ML Foundation** (3 days)
-   - Historical data analysis pipeline for commission prediction models
-   - Feature engineering for agent behavior patterns and seasonal trends
-   - A/B testing framework for advance amount optimization
-   - Initial regression model for safety threshold predictions
-
 2. **Developer Experience** (2 days)
    - GitHub Actions CI/CD pipeline with automated testing and deployment
    - Local development Docker Compose with database and monitoring stack
    - OpenAPI specification enhancements with detailed examples
    - Performance testing suite and load testing automation
 
-**Rationale:** The first week focuses on production stability and scalability, ensuring the system can handle real-world usage patterns. Week 2 builds the foundation for the core ML capabilities that will differentiate the product, while improving the development workflow for the growing engineering team.
+**Week 2 Priorities:**
+1. **ML Foundation** (3 days)
+   - Historical data analysis pipeline for commission prediction models
+   - Feature engineering for agent behavior patterns and seasonal trends
+
+2. **Production Readiness** (2 days)
+   - Add comprehensive health checks with dependency validation
+   - Add metrics collection (Prometheus/Grafana) for business KPIs
+   - Database migration scripts and backup strategy
+
+
+**Rationale:** The first week focuses on production stability and scalability, ensuring the system can handle real-world usage patterns. Week 2 builds the foundation for the core ML capabilities that will differentiate the product.
 
 ## 11 · FAQ
 

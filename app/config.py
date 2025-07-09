@@ -16,11 +16,15 @@ class Config:
     ELIGIBILITY_DAYS: int = int(os.getenv("ELIGIBILITY_DAYS", "7"))
 
     # Date Configuration (for testing)
-    FROZEN_DATE: Optional[str] = os.getenv("FROZEN_DATE", "2025-07-06")  # YYYY-MM-DD format
+    FROZEN_DATE: Optional[str] = os.getenv(
+        "FROZEN_DATE", "2025-07-06"
+    )  # YYYY-MM-DD format
 
     # Logging Configuration
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
-    LOG_FORMAT: str = os.getenv("LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    LOG_FORMAT: str = os.getenv(
+        "LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
 
     # File Upload Configuration
     MAX_FILE_SIZE: int = int(os.getenv("MAX_FILE_SIZE", "10485760"))  # 10MB in bytes
@@ -37,7 +41,7 @@ class Config:
             format=cls.LOG_FORMAT,
             handlers=[
                 logging.StreamHandler(),
-            ]
+            ],
         )
 
         # Set specific logger levels
@@ -46,8 +50,10 @@ class Config:
 
         logger = logging.getLogger(__name__)
         logger.info(f"Logging configured with level: {cls.LOG_LEVEL}")
-        logger.info(f"Configuration loaded: advance_percentage={cls.ADVANCE_PERCENTAGE}, "
-                   f"max_advance={cls.MAX_ADVANCE_AMOUNT}, eligibility_days={cls.ELIGIBILITY_DAYS}")
+        logger.info(
+            f"Configuration loaded: advance_percentage={cls.ADVANCE_PERCENTAGE}, "
+            f"max_advance={cls.MAX_ADVANCE_AMOUNT}, eligibility_days={cls.ELIGIBILITY_DAYS}"
+        )
 
 
 # Global configuration instance

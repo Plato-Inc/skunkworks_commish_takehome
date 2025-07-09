@@ -6,6 +6,7 @@ from typing import List
 @dataclass
 class CarrierRemittance:
     """Represents a payment record from insurance carriers"""
+
     policy_id: str
     agent_id: str
     carrier: str
@@ -17,6 +18,7 @@ class CarrierRemittance:
 @dataclass
 class CRMPolicy:
     """Represents a policy record from CRM system"""
+
     policy_id: str
     agent_id: str
     submit_date: date
@@ -26,6 +28,7 @@ class CRMPolicy:
 @dataclass
 class PolicyAnalysis:
     """Analysis results for a single policy"""
+
     policy_id: str
     agent_id: str
     earned_to_date: float
@@ -38,6 +41,7 @@ class PolicyAnalysis:
 @dataclass
 class AgentQuote:
     """Commission advance quote for an agent"""
+
     agent_id: str
     earned_to_date: float
     total_eligible_remaining: float
@@ -48,6 +52,7 @@ class AgentQuote:
 @dataclass
 class AdvanceQuoteResponse:
     """Response object for advance quote API"""
+
     generated_at: str
     quotes: List[AgentQuote]
     total_agents: int

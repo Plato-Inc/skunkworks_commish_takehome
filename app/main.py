@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=config.API_TITLE,
     version=config.API_VERSION,
-    description="Commission advance engine for insurance agents"
+    description="Commission advance engine for insurance agents",
 )
 
 
@@ -32,8 +32,8 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
         content={
             "error": "Data validation failed",
             "detail": str(exc),
-            "type": "validation_error"
-        }
+            "type": "validation_error",
+        },
     )
 
 
@@ -46,8 +46,8 @@ async def business_logic_exception_handler(request: Request, exc: BusinessLogicE
         content={
             "error": "Business logic processing failed",
             "detail": str(exc),
-            "type": "business_logic_error"
-        }
+            "type": "business_logic_error",
+        },
     )
 
 
@@ -60,8 +60,8 @@ async def file_processing_exception_handler(request: Request, exc: FileProcessin
         content={
             "error": "File processing failed",
             "detail": str(exc),
-            "type": "file_processing_error"
-        }
+            "type": "file_processing_error",
+        },
     )
 
 
@@ -71,14 +71,16 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
-        "version": config.API_VERSION
+        "version": config.API_VERSION,
     }
 
 
 @app.post("/advance-quote", response_model=AdvanceQuoteResponse)
 async def advance_quote(
-    carrier_remittance: UploadFile = File(..., description="Carrier remittance CSV file"),
-    crm_policies: UploadFile = File(..., description="CRM policies CSV file")
+    carrier_remittance: UploadFile = File(
+        ..., description="Carrier remittance CSV file"
+    ),
+    crm_policies: UploadFile = File(..., description="CRM policies CSV file"),
 ):
     """
     Calculate commission advance quotes for agents.
@@ -95,21 +97,27 @@ async def advance_quote(
         # Validate file types
         for file_obj in [carrier_remittance, crm_policies]:
             if not file_obj.filename or not file_obj.filename.endswith(".csv"):
-                raise FileProcessingError(f"File {file_obj.filename} must be a CSV file")
+                raise FileProcessingError(
+                    f"File {file_obj.filename} must be a CSV file"
+                )
 
             # Check file size
             if file_obj.size and file_obj.size > config.MAX_FILE_SIZE:
-                raise FileProcessingError(f"File {file_obj.filename} exceeds maximum size limit")
+                raise FileProcessingError(
+                    f"File {file_obj.filename} exceeds maximum size limit"
+                )
 
         # Read CSV files
         try:
             carrier_content = await carrier_remittance.read()
             crm_content = await crm_policies.read()
 
-            carrier_df = pd.read_csv(StringIO(carrier_content.decode('utf-8')))
-            crm_df = pd.read_csv(StringIO(crm_content.decode('utf-8')))
+            carrier_df = pd.read_csv(StringIO(carrier_content.decode("utf-8")))
+            crm_df = pd.read_csv(StringIO(crm_content.decode("utf-8")))
 
-            logger.info(f"Read {len(carrier_df)} carrier records and {len(crm_df)} CRM records")
+            logger.info(
+                f"Read {len(carrier_df)} carrier records and {len(crm_df)} CRM records"
+            )
 
         except UnicodeDecodeError as e:
             raise FileProcessingError(f"File encoding error: {str(e)}")
@@ -133,7 +141,7 @@ async def advance_quote(
                 generated_at=datetime.utcnow().isoformat(),
                 quotes=agent_quotes,
                 total_agents=len(agent_quotes),
-                total_policies_analyzed=len(crm_clean)
+                total_policies_analyzed=len(crm_clean),
             )
             logger.info(f"Successfully generated quotes for {len(agent_quotes)} agents")
             return response_obj
@@ -146,7 +154,4 @@ async def advance_quote(
         raise
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Internal server error: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

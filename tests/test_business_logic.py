@@ -1,14 +1,10 @@
-import pytest
 import pandas as pd
-from datetime import date, timedelta
+from datetime import timedelta
 from app.business_logic import (
     compute_quotes,
     deduplicate_payments,
-    calculate_earned_per_policy,
     get_latest_policy_status,
     determine_eligibility,
-    analyze_policies,
-    calculate_agent_quotes,
     get_today
 )
 from app.config import config

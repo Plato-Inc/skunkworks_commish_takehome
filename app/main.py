@@ -9,7 +9,7 @@ from .config import config
 from .exceptions import ValidationError, BusinessLogicError, FileProcessingError
 from .validators import validate_csvs, clean_and_prepare_data
 from .business_logic import compute_quotes
-from .models import AdvanceQuoteResponse
+from .models import AdvanceQuoteResponse, AgentQuote
 
 # Setup logging
 config.setup_logging()
@@ -75,7 +75,7 @@ async def health_check():
     }
 
 
-@app.post("/advance-quote")
+@app.post("/advance-quote", response_model=AdvanceQuoteResponse)
 async def advance_quote(
     carrier_remittance: UploadFile = File(..., description="Carrier remittance CSV file"),
     crm_policies: UploadFile = File(..., description="CRM policies CSV file")
@@ -127,17 +127,16 @@ async def advance_quote(
         # Calculate quotes
         try:
             quotes = compute_quotes(carrier_clean, crm_clean)
-            
-            # Create response
-            response = {
-                "generated_at": datetime.utcnow().isoformat(),
-                "quotes": quotes,
-                "total_agents": len(quotes),
-                "total_policies_analyzed": len(crm_clean)
-            }
-            
-            logger.info(f"Successfully generated quotes for {len(quotes)} agents")
-            return response
+            # quotes is a list of dicts; convert to AgentQuote dataclasses
+            agent_quotes = [AgentQuote(**q) for q in quotes]
+            response_obj = AdvanceQuoteResponse(
+                generated_at=datetime.utcnow().isoformat(),
+                quotes=agent_quotes,
+                total_agents=len(agent_quotes),
+                total_policies_analyzed=len(crm_clean)
+            )
+            logger.info(f"Successfully generated quotes for {len(agent_quotes)} agents")
+            return response_obj
             
         except Exception as e:
             raise BusinessLogicError(f"Quote calculation failed: {str(e)}")

@@ -7,6 +7,7 @@ SAFE_TO_ADVANCE_CAP = 2000
 ADVANCE_RATE = 0.8
 ELIGIBILITY_DAYS = 7
 
+
 def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
     # 1. Sum payments per policy/agent
     earned = carrier_df.groupby(["policy_id", "agent_id"])["amount"].sum().reset_index()
@@ -24,9 +25,7 @@ def compute_quotes(carrier_df: pd.DataFrame, crm_df: pd.DataFrame):
 
     # 5. Eligibility
     policy_summary["submit_date"] = pd.to_datetime(policy_summary["submit_date"]).dt.date
-    policy_summary["eligible"] = (policy_summary["status"] == "active") & (
-        policy_summary["submit_date"] <= TODAY - timedelta(days=ELIGIBILITY_DAYS)
-    )
+    policy_summary["eligible"] = (policy_summary["status"] == "active") & (policy_summary["submit_date"] <= TODAY - timedelta(days=ELIGIBILITY_DAYS))
     eligible = policy_summary[policy_summary["eligible"]]
 
     # 6. Safe to advance per agent

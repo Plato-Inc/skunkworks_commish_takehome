@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 
 from app.routes.v1.advance import router as advance_router

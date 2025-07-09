@@ -51,4 +51,4 @@ class AdvanceQuoteResponse:
     generated_at: str
     quotes: List[AgentQuote]
     total_agents: int
-    total_policies_analyzed: int 
+    total_policies_analyzed: int

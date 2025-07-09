@@ -22,4 +22,4 @@ class FileProcessingError(CommissionEngineException):
 
 class ConfigurationError(CommissionEngineException):
     """Raised when configuration is invalid"""
-    pass 
+    pass

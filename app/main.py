@@ -82,35 +82,35 @@ async def advance_quote(
 ):
     """
     Calculate commission advance quotes for agents.
-    
+
     Expects two CSV files:
     - carrier_remittance: Contains payment records with columns: policy_id, agent_id, carrier, paid_date, amount, status
     - crm_policies: Contains policy details with columns: policy_id, agent_id, submit_date, ltv_expected
-    
+
     Returns per-agent commission advance quotes based on business rules.
     """
     logger.info("Processing advance quote request")
-    
+
     try:
         # Validate file types
         for file_obj in [carrier_remittance, crm_policies]:
             if not file_obj.filename or not file_obj.filename.endswith(".csv"):
                 raise FileProcessingError(f"File {file_obj.filename} must be a CSV file")
-            
+
             # Check file size
             if file_obj.size and file_obj.size > config.MAX_FILE_SIZE:
                 raise FileProcessingError(f"File {file_obj.filename} exceeds maximum size limit")
-        
+
         # Read CSV files
         try:
             carrier_content = await carrier_remittance.read()
             crm_content = await crm_policies.read()
-            
+
             carrier_df = pd.read_csv(StringIO(carrier_content.decode('utf-8')))
             crm_df = pd.read_csv(StringIO(crm_content.decode('utf-8')))
-            
+
             logger.info(f"Read {len(carrier_df)} carrier records and {len(crm_df)} CRM records")
-            
+
         except UnicodeDecodeError as e:
             raise FileProcessingError(f"File encoding error: {str(e)}")
         except pd.errors.EmptyDataError:
@@ -119,11 +119,11 @@ async def advance_quote(
             raise FileProcessingError(f"CSV parsing error: {str(e)}")
         except Exception as e:
             raise FileProcessingError(f"Failed to read CSV files: {str(e)}")
-        
+
         # Validate and clean data
         validate_csvs(carrier_df, crm_df)
         carrier_clean, crm_clean = clean_and_prepare_data(carrier_df, crm_df)
-        
+
         # Calculate quotes
         try:
             quotes = compute_quotes(carrier_clean, crm_clean)
@@ -137,10 +137,10 @@ async def advance_quote(
             )
             logger.info(f"Successfully generated quotes for {len(agent_quotes)} agents")
             return response_obj
-            
+
         except Exception as e:
             raise BusinessLogicError(f"Quote calculation failed: {str(e)}")
-            
+
     except (ValidationError, BusinessLogicError, FileProcessingError):
         # Re-raise custom exceptions to be handled by exception handlers
         raise

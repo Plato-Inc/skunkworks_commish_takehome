@@ -70,22 +70,75 @@ We freeze **today** to `2025‑07‑06` in the skeleton for unit‑test reproduc
 
 ---
 
-## 6 · Running Locally
+## 6 · Prerequisites
+
+### Installing Poetry
+
+This project uses Poetry for dependency management. Install Poetry using pipx (recommended):
+
+```bash
+# Install pipx if you don't have it
+python -m pip install --user pipx
+python -m pipx ensurepath
+
+# Install Poetry
+pipx install poetry
+```
+
+Alternatively, install Poetry directly:
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+### Installing pipx
+
+If you don't have pipx installed:
+
+```bash
+python -m pip install --user pipx
+python -m pipx ensurepath
+```
+
+## 7 · Running Locally
 
 ```bash
 # Option A: Docker
 docker compose up --build
 
 # Option B: Local
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+poetry install
+poetry run uvicorn app.main:app --reload
 ```
 
 Run tests:
 
 ```bash
-pytest -q
+poetry run pytest -q
+```
+
+Run linting:
+
+```bash
+poetry run ruff check .
+```
+
+Fix linting issues:
+
+```bash
+poetry run ruff check . --fix
+```
+
+### Makefile Shortcuts
+
+For convenience, you can also use the provided Makefile shortcuts:
+
+```bash
+make install    # Install dependencies
+make dev        # Run the development server
+make test       # Run tests
+make lint       # Run linting
+make lint-fix   # Fix linting issues
 ```
 
 ---

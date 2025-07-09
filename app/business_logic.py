@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 def get_today() -> date:
     """Get current date for business logic (configurable for testing)"""
-    return date(2025, 7, 6)  # Frozen for reproducibility
+    return date.fromisoformat(config.FROZEN_DATE)  # Frozen for reproducibility
 
 
 def deduplicate_payments(carrier_df: pd.DataFrame) -> pd.DataFrame:

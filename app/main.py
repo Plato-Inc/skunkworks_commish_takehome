@@ -12,14 +12,6 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="SMS Commission Engine")
 
-TODAY = datetime(2025, 7, 6).date()  # freeze for reproducibility; replace with datetime.utcnow().date()
-
-def safe_float(x):
-    try:
-        return float(x)
-    except Exception:
-        return 0.0
-
 @app.post("/advance-quote")
 async def advance_quote(
     carrier_remittance: UploadFile = File(..., description="Carrier remittance CSV file"),

@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 def get_today() -> date:
     """Get current date for business logic (configurable for testing)"""
+    if config.FROZEN_DATE is None:
+        raise ValueError("FROZEN_DATE must be set in configuration")
     return date.fromisoformat(config.FROZEN_DATE)  # Frozen for reproducibility
 
 
@@ -108,7 +110,10 @@ def analyze_policies(carrier_df: pd.DataFrame, crm_df: pd.DataFrame) -> List[Pol
     policy_analyses = []
     
     for _, crm_row in crm_df.iterrows():
-        policy_key = (crm_row['policy_id'], crm_row['agent_id'])
+        # Extract values from pandas Series and convert to proper types
+        policy_id = str(crm_row['policy_id'])
+        agent_id = str(crm_row['agent_id'])
+        policy_key = (policy_id, agent_id)
         
         # Get earned amount (default to 0 if no payments yet)
         earned_to_date = earned_by_policy.get(policy_key, 0.0)
@@ -117,20 +122,33 @@ def analyze_policies(carrier_df: pd.DataFrame, crm_df: pd.DataFrame) -> List[Pol
         latest_status = latest_status_by_policy.get(policy_key, 'active')
         
         # Calculate remaining expected (can't be negative)
-        remaining_expected = max(crm_row['ltv_expected'] - earned_to_date, 0.0)
+        ltv_expected = float(crm_row['ltv_expected'])
+        remaining_expected = max(ltv_expected - earned_to_date, 0.0)
         
-        # Convert submit_date to date object if it's a string
-        submit_date = crm_row['submit_date']
-        if isinstance(submit_date, str):
+        # Convert submit_date to date object - handle various input types
+        submit_date_raw = crm_row['submit_date']
+        if isinstance(submit_date_raw, str):
             from datetime import datetime
-            submit_date = datetime.strptime(submit_date, '%Y-%m-%d').date()
+            submit_date = datetime.strptime(submit_date_raw, '%Y-%m-%d').date()
+        elif isinstance(submit_date_raw, date):
+            # Already a date object
+            submit_date = submit_date_raw
+        else:
+            # Handle pandas Timestamp or other date-like objects
+            try:
+                # Try to access date() method (for pandas Timestamp)
+                submit_date = submit_date_raw.date()  # type: ignore
+            except AttributeError:
+                # Fall back to string conversion and parsing
+                from datetime import datetime
+                submit_date = datetime.strptime(str(submit_date_raw), '%Y-%m-%d').date()
         
         # Determine eligibility
         is_eligible = determine_eligibility(submit_date, latest_status, today)
         
         analysis = PolicyAnalysis(
-            policy_id=crm_row['policy_id'],
-            agent_id=crm_row['agent_id'],
+            policy_id=policy_id,
+            agent_id=agent_id,
             earned_to_date=earned_to_date,
             remaining_expected=remaining_expected,
             is_eligible=is_eligible,

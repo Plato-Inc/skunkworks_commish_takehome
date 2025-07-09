@@ -130,6 +130,77 @@ def test_compute_quotes_basic():
     result = compute_quotes(carrier, crm)
     assert result[0]["safe_to_advance"] == 320  # 800‑400 earned =400; 0.8×400=320
 
+def test_compute_quotes_submit_date_within_7_days_not_eligible():
+    """Test that policies with submit dates within 7 days are not eligible for advance."""
+    from datetime import datetime, timedelta
+    
+    # Create a date that's within 7 days of today
+    today = datetime.now()
+    within_7_days = (today - timedelta(days=5)).strftime("%Y-%m-%d")
+    
+    carrier = pd.DataFrame({
+        "policy_id": ["P001"],
+        "agent_id": ["A1"],
+        "paid_date": ["2025-07-01"],
+        "amount": [200],
+        "status": ["active"]
+    })
+    crm = pd.DataFrame({
+        "policy_id": ["P001"],
+        "agent_id": ["A1"],
+        "submit_date": [within_7_days],  # Within 7 days - should not be eligible
+        "ltv_expected": [1000]
+    })
+    result = compute_quotes(carrier, crm)
+    assert result[0]["safe_to_advance"] == 0  # Should be 0 since policy is not eligible
+
+def test_compute_quotes_cancellation_example():
+    """Test the specific cancellation example from the sample data."""
+    carrier = pd.DataFrame({
+        "policy_id": ["PCLAW1", "PCLAW1"],
+        "agent_id": ["A005", "A005"],
+        "paid_date": ["2025-06-17", "2025-07-07"],
+        "amount": [200.0, -200.0],
+        "status": ["active", "cancelled"]
+    })
+    crm = pd.DataFrame({
+        "policy_id": ["PCLAW1"],
+        "agent_id": ["A005"],
+        "submit_date": ["2025-06-10"],
+        "ltv_expected": [1000]
+    })
+    result = compute_quotes(carrier, crm)
+    # Expected: earned_to_date = 0 (200 + (-200) = 0)
+    # Policy is not eligible because latest status is "cancelled" (not "active")
+    # safe_to_advance = 0 (no eligible policies)
+    assert result[0]["earned_to_date"] == 0
+    assert result[0]["safe_to_advance"] == 0
+
+def test_compute_quotes_mixed_eligibility_and_status():
+    """Test combination of ineligible dates and cancelled status."""
+    from datetime import datetime, timedelta
+
+    today = datetime.now()
+    within_7_days = (today - timedelta(days=3)).strftime("%Y-%m-%d")
+    outside_7_days = (today - timedelta(days=10)).strftime("%Y-%m-%d")
+    
+    carrier = pd.DataFrame({
+        "policy_id": ["P001", "P003", "P002"],
+        "agent_id": ["A1", "A1", "A1"],
+        "paid_date": ["2025-07-01", "2025-09-01", "2025-08-01"],
+        "amount": [200, 400, -300],
+        "status": ["active", "active", "cancelled"]
+    })
+    crm = pd.DataFrame({
+        "policy_id": ["P001", "P002", "P003"],
+        "agent_id": ["A1", "A1", "A1"],
+        "submit_date": [outside_7_days, outside_7_days, within_7_days],
+        "ltv_expected": [800, 1000, 1200]
+    })
+    result = compute_quotes(carrier, crm)
+    assert result[0]["earned_to_date"] == 300
+    assert result[0]["safe_to_advance"] == 480
+
 def test_compute_quotes_sample_data():
     """Test compute_quotes with the sample_data CSV files and compare to expected response."""
     import json

@@ -2,7 +2,8 @@
 import pandas as pd
 from fastapi.testclient import TestClient
 
-from app.main import app, compute_quotes
+from app.main import app
+from app.quotes import compute_quotes
 
 client = TestClient(app)
 

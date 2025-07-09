@@ -1,48 +1,10 @@
-from datetime import datetime, timezone
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI
 
 from app.logging_config import configure_logging
-from app.quotes import compute_quotes
-from app.utils import _read_csv_file, _validate_csv_files
+from app.routes.advance import router as advance_router
 
 logger = configure_logging()
 
 app = FastAPI(title="SMS Commission Engine")
-
-@app.post("/advance-quote")
-async def advance_quote(
-    carrier_remittance: UploadFile = File(..., description="Carrier remittance CSV file"),
-    crm_policies: UploadFile = File(..., description="CRM policies CSV file")
-):
-    logger.info(f"Processing advance quote request with files: {carrier_remittance.filename}, {crm_policies.filename}")
-    
-    # Validate file types
-    if not _validate_csv_files(carrier_remittance, crm_policies):
-        logger.warning(f"Invalid file types submitted: {carrier_remittance.filename}, {crm_policies.filename}")
-        raise HTTPException(
-            status_code=400, 
-            detail="Both uploads must be valid CSV files with .csv extension"
-        )
-    
-    try:
-        # Read CSV files with error handling
-        carrier_df = _read_csv_file(carrier_remittance, "carrier_remittance")
-        crm_df = _read_csv_file(crm_policies, "crm_policies")
-        
-        logger.info(f"Successfully read CSV files. Carrier records: {len(carrier_df)}, CRM records: {len(crm_df)}")
-        
-        quotes = compute_quotes(carrier_df, crm_df)
-        
-        logger.info(f"Successfully generated quotes for {len(quotes)} agents")
-        
-        return {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
-            "quotes": quotes
-        }
-    except ValueError as e:
-        logger.error(f"CSV validation error: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Invalid CSV format: {str(e)}")
-    except Exception:
-        logger.error("Unexpected error during quote generation", exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error")
+app.include_router(advance_router)
